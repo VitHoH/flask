@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Добавление вопроса</h1>
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.question.label }}<br>
+        {{ form.question(class="form-control") }}<br>
+        {% for error in form.question.errors %}
+            <p content="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.first_answer.label }}<br>
+        {{ form.first_answer(class="form-control") }}<br>
+        {% for error in form.first_answer.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.second_answer.label }}<br>
+        {{ form.second_answer(class="form-control") }}<br>
+        {% for error in form.second_answer.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.third_answer.label }}<br>
+        {{ form.third_answer(class="form-control") }}<br>
+        {% for error in form.third_answer.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.fourth_answer.label }}<br>
+        {{ form.fourth_answer(class="form-control") }}<br>
+        {% for error in form.fourth_answer.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.true_answer.label }}<br>
+        {{ form.true_answer(class="form-control") }}<br>
+        {% for error in form.true_answer.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.category.label }}<br>
+        {{ form.category(class="form-control") }}<br>
+        {% for error in form.category.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+    {{message}}
+</form>
+{% endblock %}

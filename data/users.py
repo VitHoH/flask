@@ -38,7 +38,6 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     all_nature_questions = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     correctly_nature_questions = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     trophies = sqlalchemy.Column(sqlalchemy.Integer, default=0)
-    question = orm.relationship("News", back_populates='user')
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)

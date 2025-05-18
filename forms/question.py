@@ -4,7 +4,7 @@ from wtforms import BooleanField, SubmitField, IntegerField
 from wtforms.validators import DataRequired
 
 
-class QuestionForm(FlaskForm):
+class AddQuestionForm(FlaskForm):
     question = StringField('Вопрос', validators=[DataRequired()])
     first_answer = TextAreaField("Первый ответ")
     second_answer = TextAreaField("Второй ответ")
@@ -16,3 +16,8 @@ class QuestionForm(FlaskForm):
                                    ("literature", "Литература"), ("sport", "Спорт"), ("film", "Фильмы"),
                                    ("music", "Музыка"), ("nature", "Природа")])
     submit = SubmitField('Применить')
+
+
+class QuestionForm(FlaskForm):
+    your_answer = IntegerField('Ваш ответ номер: ')
+    submit = SubmitField('Ответить')

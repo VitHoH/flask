@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Результаты вашего ответа на вопрос</h1>
+<h4>Вопрос: {{question}}?</h4>
+<h6>1){{first_answer}}</h6>
+<h6>2){{second_answer}}</h6>
+<h6>3){{third_answer}}</h6>
+<h6>4){{fourth_answer}}</h6>
+<h6>% правильных ответов: {{proz_true_ans}}</h6>
+<h6>всего ответов: {{col_answers}}</h6>
+<h6>Автор вопроса - <a href="{{author_href}}">{{ author }}</a></h6>
+<h5>Вы ответили {{your_answer}}</h5>
+<h5>Правилтный ответ - {{true_answer}}</h5>
+<a href="/question_start" class="btn btn-warning">Ответить ещё на вопрос</a>
+<a href="/" class="btn btn-danger">Вернуться на главную</a>
+{% endblock %}

@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ name }}</h1>
+<h4>Информация о пользователе: {{ about }}</h4>
+<h4>Дата создания аккаунта -  {{ created_date }}</h4>
+<h4>Трофеи: {{ trophies }}</h4>
+<h6>На сколько ответил вопросов всего -  {{ questions_answered }}</h6>
+<h6>% Правильных ответов - {{ proz_cor_ans }}%</h6>
+<h6>Сколько создал вопросов - {{ question_created }}</h6>
+<h6>Статистика по разным рубрика:</h6>
+<ol>
+    <li>История:
+        <ol>
+            <li>
+                <h6>На сколько ответил вопросов всего -  {{ h_questions_answered }}</h6>
+            </li>
+            <li>
+                <h6>% Правильных ответов - {{ h_proz_cor_ans }}%</h6>
+            </li>
+        </ol>
+    </li>
+    <li>География:
+        <ol>
+            <li>
+                <h6>На сколько ответил вопросов всего -  {{ g_questions_answered }}</h6>
+            </li>
+            <li>
+                <h6>% Правильных ответов - {{ g_proz_cor_ans }}%</h6>
+            </li>
+        </ol>
+    </li>
+    <li>Наука:
+        <ol>
+            <li>
+                <h6>На сколько ответил вопросов всего -  {{ s_questions_answered }}</h6>
+            </li>
+            <li>
+                <h6>% Правильных ответов - {{ s_proz_cor_ans }}%</h6>
+            </li>
+        </ol>
+    </li>
+    <li>Литература:
+        <ol>
+            <li>
+                <h6>На сколько ответил вопросов всего -  {{ l_questions_answered }}</h6>
+            </li>
+            <li>
+                <h6>% Правильных ответов - {{ l_proz_cor_ans }}%</h6>
+            </li>
+        </ol>
+    </li>
+    <li>Спорт:
+        <ol>
+            <li>
+                <h6>На сколько ответил вопросов всего -  {{ sp_questions_answered }}</h6>
+            </li>
+            <li>
+                <h6>% Правильных ответов - {{ sp_proz_cor_ans }}%</h6>
+            </li>
+        </ol>
+    </li>
+    <li>Фильмы:
+        <ol>
+            <li>
+                <h6>На сколько ответил вопросов всего -  {{ f_questions_answered }}</h6>
+            </li>
+            <li>
+                <h6>% Правильных ответов - {{ f_proz_cor_ans }}%</h6>
+            </li>
+        </ol>
+    </li>
+    <li>Музыка:
+        <ol>
+            <li>
+                <h6>На сколько ответил вопросов всего -  {{ m_questions_answered }}</h6>
+            </li>
+            <li>
+                <h6>% Правильных ответов - {{ m_proz_cor_ans }}%</h6>
+            </li>
+        </ol>
+    </li>
+    <li>Природа:
+        <ol>
+            <li>
+                <h6>На сколько ответил вопросов всего -  {{ n_questions_answered }}</h6>
+            </li>
+            <li>
+                <h6>% Правильных ответов - {{ n_proz_cor_ans }}%</h6>
+            </li>
+        </ol>
+    </li>
+</ol>
+{% endblock %}
