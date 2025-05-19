@@ -4,8 +4,10 @@ from flask import Flask, render_template, redirect, jsonify
 from flask import make_response
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from flask_restful import Api
-import sys
+from sqlalchemy import desc
+
 from data import db_session
+from data import question_api
 from data.questions import Question
 from data.users import User
 from forms.question import AddQuestionForm, QuestionForm
@@ -26,7 +28,9 @@ def load_user(user_id):
 
 @app.route("/")
 def index():
-    return render_template("index.html", title='Главная', dynamic_link=f'/profile/{current_user.id}')
+    if current_user.is_authenticated:
+        return render_template("index.html", title='Главная', dynamic_link=f'/profile/{current_user.id}')
+    return render_template("index.html", title='Главная')
 
 
 @app.route('/question', methods=['GET', 'POST'])
@@ -47,8 +51,11 @@ def add_question():
         db_sess.add(question)
         db_sess.commit()
         return redirect('/')
+    if current_user.is_authenticated:
+        return render_template('add_question.html', title='Добавление вопроса',
+                               form=form, dynamic_link=f'/profile/{current_user.id}')
     return render_template('add_question.html', title='Добавление вопроса',
-                           form=form, dynamic_link=f'/profile/{current_user.id}')
+                           form=form)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -101,6 +108,7 @@ def start_question():
 
 
 @app.route('/question/<int:id>', methods=['GET', 'POST'])
+@login_required
 def question(id):
     form = QuestionForm()
     db_sess = db_session.create_session()
@@ -162,15 +170,25 @@ def question(id):
         proz_true_ans = question.col_answers / question.col_correct_answers * 100
     except ZeroDivisionError:
         proz_true_ans = 'На этот вопрос никто не отвечал'
+    if current_user.is_authenticated:
+        return render_template('question.html', question=question.question, first_answer=question.first_answer,
+                               second_answer=question.second_answer, third_answer=question.third_answer,
+                               fourth_answer=question.fourth_answer,
+                               proz_true_ans=proz_true_ans,
+                               col_answers=question.col_answers, form=form, dynamic_link=f'/profile/{current_user.id}',
+                               author_href=f'/profile/{question.author_id}', author=question.author.name,
+                               title='Ответьте на вопрос')
     return render_template('question.html', question=question.question, first_answer=question.first_answer,
                            second_answer=question.second_answer, third_answer=question.third_answer,
                            fourth_answer=question.fourth_answer,
                            proz_true_ans=proz_true_ans,
-                           col_answers=question.col_answers, form=form, dynamic_link=f'/profile/{current_user.id}',
-                           author_href=f'/profile/{question.author_id}', author=question.author.name)
+                           col_answers=question.col_answers, form=form,
+                           author_href=f'/profile/{question.author_id}', author=question.author.name,
+                           title='Ответьте на вопрос')
 
 
 @app.route('/result/<int:id_question>/<int:your_answer>')
+@login_required
 def result(id_question, your_answer):
     db_sess = db_session.create_session()
     question = db_sess.query(Question).filter(Question.id == id_question).first()
@@ -184,7 +202,8 @@ def result(id_question, your_answer):
                            proz_true_ans=proz_true_ans,
                            col_answers=question.col_answers, your_answer=your_answer,
                            true_answer=question.correct_answer, dynamic_link=f'/profile/{current_user.id}',
-                           author_href=f'/profile/{question.author_id}', author=question.author.name)
+                           author_href=f'/profile/{question.author_id}', author=question.author.name,
+                           title='Результаты ответа на вопрос')
 
 
 @app.route('/logout')
@@ -198,8 +217,67 @@ def logout():
 def profile(id):
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.id == id).first()
+    questions = db_sess.query(Question).filter(Question.author_id == id).all()
+    col_question_created = len(questions)
+    try:
+        h_proz_cor_ans = f'{round(user.correctly_history_questions / user.all_history_questions, 1) * 100}%'
+        print(user.correctly_history_questions)
+    except ZeroDivisionError:
+        h_proz_cor_ans = 'Пользователь ни разу не отвечал на вопросы этой рубрики'
+    try:
+        g_proz_cor_ans = f'{round(user.correctly_geography_questions / user.all_geography_questions, 1) * 100}%'
+    except ZeroDivisionError:
+        g_proz_cor_ans = 'Пользователь ни разу не отвечал на вопросы этой рубрики'
+    try:
+        s_proz_cor_ans = f'{round(user.correctly_science_questions / user.all_science_questions, 1) * 100}%'
+    except ZeroDivisionError:
+        s_proz_cor_ans = 'Пользователь ни разу не отвечал на вопросы этой рубрики'
+    try:
+        l_proz_cor_ans = f'{round(user.correctly_literature_questions / user.all_literature_questions, 1) * 100}%'
+    except ZeroDivisionError:
+        l_proz_cor_ans = 'Пользователь ни разу не отвечал на вопросы этой рубрики'
+    try:
+        sp_proz_cor_ans = f'{round(user.correctly_sport_questions / user.all_sport_questions, 1) * 100}%'
+    except ZeroDivisionError:
+        sp_proz_cor_ans = 'Пользователь ни разу не отвечал на вопросы этой рубрики'
+    try:
+        f_proz_cor_ans = f'{round(user.correctly_films_questions / user.all_films_questions, 1) * 100}%'
+    except ZeroDivisionError:
+        f_proz_cor_ans = 'Пользователь ни разу не отвечал на вопросы этой рубрики'
+    try:
+        m_proz_cor_ans = f'{round(user.correctly_music_questions / user.all_music_questions, 1) * 100}%'
+    except ZeroDivisionError:
+        m_proz_cor_ans = 'Пользователь ни разу не отвечал на вопросы этой рубрики'
+    try:
+        n_proz_cor_ans = f'{round(user.correctly_nature_questions / user.all_nature_questions, 1) * 100}%'
+    except ZeroDivisionError:
+        n_proz_cor_ans = 'Пользователь ни разу не отвечал на вопросы этой рубрики'
+    questions_answered = user.all_history_questions + user.all_geography_questions + user.all_science_questions + user.all_literature_questions + user.all_sport_questions + user.all_films_questions + user.all_music_questions + user.all_nature_questions
+    col_cor_ans = user.correctly_history_questions + user.correctly_films_questions + user.correctly_music_questions + user.correctly_sport_questions + user.correctly_nature_questions + user.correctly_literature_questions + user.correctly_geography_questions + user.correctly_science_questions
+    try:
+        proz_cor_ans = f'{round(col_cor_ans / questions_answered, 1) * 100}%'
+    except ZeroDivisionError:
+        proz_cor_ans = 'Пользователь ни разу не отвечал на вопросы'
+    return render_template('profile.html', name=user.name, about=user.about, created_date=user.created_date.date(),
+                           trophies=user.trophies, h_questions_answered=user.all_history_questions,
+                           g_questions_answered=user.all_geography_questions,
+                           s_questions_answered=user.all_science_questions,
+                           l_questions_answered=user.all_literature_questions,
+                           sp_questions_answered=user.all_sport_questions,
+                           f_questions_answered=user.all_films_questions, m_questions_answered=user.all_music_questions,
+                           n_questions_answered=user.all_nature_questions, col_question_created=col_question_created,
+                           questions_answered=questions_answered, h_proz_cor_ans=h_proz_cor_ans,
+                           g_proz_cor_ans=g_proz_cor_ans, s_proz_cor_ans=s_proz_cor_ans, l_proz_cor_ans=l_proz_cor_ans,
+                           sp_proz_cor_ans=sp_proz_cor_ans, m_proz_cor_ans=m_proz_cor_ans,
+                           f_proz_cor_ans=f_proz_cor_ans, n_proz_cor_ans=n_proz_cor_ans, proz_cor_ans=proz_cor_ans,
+                           title=f"Профиль пользователя {user.name}")
 
-    return render_template('profile.html', name=user.name, about=user.about, created_date=user.created_date)
+
+@app.route('/leaderboard')
+def leaderboard():
+    db_sess = db_session.create_session()
+    users = db_sess.query(User).order_by(desc(User.trophies), User.name).limit(20).all()
+    return render_template('leaderboard.html', leaderboard=users, col_leaders=len(users), title="Таблица лидеров")
 
 
 @app.errorhandler(404)
@@ -214,22 +292,11 @@ def bad_request(_):
 
 def main():
     db_session.global_init("db/quiz.db")
-    # questions = sys.stdin.read().split('\n')
-    # for question in questions:
-    #     question_this = question.split(',')
-    #     print(question_this)
-    #     db_sess = db_session.create_session()
-    #     question = Question()
-    #     question.question = question_this[0].strip()
-    #     question.first_answer = question_this[1].strip()
-    #     question.second_answer = question_this[2].strip()
-    #     question.third_answer = question_this[3].strip()
-    #     question.fourth_answer = question_this[4].strip()
-    #     question.correct_answer = question_this[5].strip()
-    #     question.category = 'history'
-    #     question.author_id = 1
-    #     db_sess.add(question)
-    #     db_sess.commit()
+    # для списка объектов
+    api.add_resource(question_api.QuestionListResource, '/api/question')
+
+    # для одного объекта
+    api.add_resource(question_api.QuestionResource, '/api/question/<int:question_id>')
     app.run()
 
 

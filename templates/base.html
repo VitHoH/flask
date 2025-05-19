@@ -13,6 +13,7 @@
 <header>
     <nav class="navbar navbar-light bg-light">
         <a class="navbar-brand" href="/">Наше приложение</a>
+        <a class="btn btn-info" href="/leaderboard">Таблица лидеров</a>
         {% if current_user.is_authenticated %}
         <a href="/logout" class="btn btn-danger">Выйти</a>
     <a class="navbar-brand" href="{{ dynamic_link }}">{{ current_user.name }}</a>
