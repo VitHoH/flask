@@ -1,0 +1,10 @@
+random
+flask
+flask_login
+flask_restful
+sqlalchemy
+flask_wtf
+wtforms
+sqlalchemy_serializer
+werkzeug
+flask_restful
